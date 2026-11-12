@@ -193,6 +193,11 @@ jobs:
           add: "data.json --force"
           message: "Update data.json"
           default_author: github_actions
+      - name: Purge jsdelivr cache # 数据更新后清 CDN 缓存，避免分支引用滞后 12 小时
+        if: ${{ env.SIMPLE_MODE == 'true' }}
+        run: |
+          sleep 15
+          curl -s -m 30 "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/data.json" > /dev/null && echo "jsdelivr 缓存已清除"
 
   keepalive-workflow:
     name: Keepalive Workflow
